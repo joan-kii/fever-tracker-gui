@@ -1,8 +1,12 @@
 import os
+import sys
 import csv
 from datetime import datetime
 from fpdf import FPDF # type: ignore
-import tkinter as tk
+from PyQt5.QtWidgets import QApplication, QLabel, QPushButton, QVBoxLayout, QWidget, QFileDialog, QGridLayout
+from PyQt5.QtGui import QPixmap
+from PyQt5 import QtGui, QtCore
+from PyQt5.QtGui import QCursor
 
 
 def main() -> None:
@@ -17,11 +21,15 @@ def main() -> None:
     """ add_row("joan_16-07-2022.csv") """
     """ convert_track("joan_16-07-2022.csv") """
 
-    root = tk.Tk()
-    my_label = tk.Label("Hello World!")
-    my_label.pack()
+    app = QApplication(sys.argv)
+    window = QWidget()
+    window.setWindowTitle("Fever Tracker")
+    window.setFixedWidth(1000)
+    window.move(350, 200)
+    window.setStyleSheet("background: #2a9d8f;")
 
-    root.mainloop()
+    window.show()
+    sys.exit(app.exec())
 
 
 def new_track(name: str, patology: str, temp: str, medicine: str, dosage: str):
