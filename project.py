@@ -8,6 +8,8 @@ from PyQt5.QtGui import QPixmap
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtGui import QCursor
 
+from functions import frame_1, grid
+
 
 def main() -> None:
 
@@ -27,8 +29,11 @@ def main() -> None:
     window.setFixedWidth(1000)
     window.move(350, 200)
     window.setStyleSheet("background: #2a9d8f;")
-
+    
+    frame_1()
+    window.setLayout(grid)
     window.show()
+    
     sys.exit(app.exec())
 
 
