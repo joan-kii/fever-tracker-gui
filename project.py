@@ -4,7 +4,7 @@ from PyQt5.QtGui import QPixmap # type: ignore
 from PyQt5 import QtGui, QtCore # type: ignore
 from PyQt5.QtGui import QCursor # type: ignore
 
-from gui import frame_1, grid
+from gui import frame_1, main_layout
 
 
 def main() -> None:
@@ -23,7 +23,7 @@ def main() -> None:
     window.setStyleSheet("background: #2a9d8f;")
     
     frame_1()
-    window.setLayout(grid)
+    window.setLayout(main_layout)
     window.show()
     
     sys.exit(app.exec())
