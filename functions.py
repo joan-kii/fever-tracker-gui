@@ -1,106 +1,152 @@
-from PyQt5.QtWidgets import QGridLayout, QLabel, QPushButton
-from PyQt5.QtGui import QPixmap, QCursor
-from PyQt5 import QtCore
+import os
+import csv
+from datetime import datetime
+from fpdf import FPDF # type: ignore
 
 
-# Elements
+def new_track(name: str, patology: str, temp: str, medicine: str, dosage: str):
 
-widgets: dict[str, list[str]] = {
-    "logo": [],
-    "logo_text": [],
-    "button_1": [],
-    "button_2": []
-}
-
-# Grid
-
-grid = QGridLayout()
-
-# Helpers
-
-def clear_widgets() -> None:
     """
-    Clear all the widget in the view
+    Create new track stored in a csv file
     :return: None
     """
-    for widget in widgets:
-        if widgets[widget] != []:
-            widgets[widget][-1].hide()
-        for _ in range(0, len(widgets[widget])):
-            widgets[widget].pop()
+    date: datetime = datetime.now()
+    day: str = date.strftime("%d-%m-%Y")
+    hour: str = date.strftime("%H:%M")
+    path: str = "./csv_files/"
+    file_path: str = os.path.join(path, f"{name}_{day}.csv")
 
-def create_button(txt: str, l_margin: int, r_margin: int) -> None:
-    button = QPushButton(txt)
-    button.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-    button.setFixedWidth(485)
-    button.setStyleSheet(
-        "*{margin-left: " + str(l_margin) + "px;" +
-        "margin-right: " + str(r_margin) + "px;" +
-        """
-        border: 4px solid '#ff595e';
-        color: white;
-        font-family: 'shanti';
-        font-size: 16px;
-        border-radius: 25px;
-        padding: 15px 0;
-        margin-top: 20px;
-        }
-        *:hover{
-            background: '#ff595e';
-        }
-        """
-    )
+    # Only accepts valid temperature
+    if not float(temp) > 35.0 or not float(temp) < 42.0:
+        raise ValueError("Temperature has not a valid value")
 
-    button.clicked.connect(lambda _: frame_2(button))
-    return button
-            
+    # Create csv file
+    with open(file_path, "w") as track_file:
+        fieldnames: list[str] = ["Name", "Patology", "Date", "Hour", "Temperature", "Medicine", "Dosage"]
+        track_writer = csv.DictWriter(track_file, fieldnames=fieldnames)
 
-# Frames
+        track_writer.writeheader()
+        track_writer.writerow({
+            "Name": name,
+            "Patology": patology,
+            "Date": day,
+            "Hour": hour,
+            "Temperature": temp,
+            "Medicine": medicine,
+            "Dosage": dosage
+        })
 
-def frame_1():
-    clear_widgets() 
 
-    # Create logo
-    image = QPixmap("./assets/logo.png")
-    image = image.scaled(80, 80, QtCore.Qt.KeepAspectRatio)
-    logo = QLabel()
-    logo.setPixmap(image)
-    logo.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-    logo.setStyleSheet("margin-top: 60px;")
+def open_track(f: str) -> "list[dict[str, str]]":
 
-    # Create text logo
-    logo_text = QLabel("Fever Tracker")
-    logo_text.setStyleSheet(
-        """
-        font-family: 'Shanti'; 
-        font-size: 25px; 
-        color: 'white'; 
-        margin: 100px 0px;
-        """
-    )
+    """
+    Open a track stored in the csv file
+    :param f: csv file with track data
+    :return: A list of dicts with data
+    :rtype: list[dict[str, str]]
+    """
+
+    rows: list[dict[str, str]] = []
+    with open("./csv_files/" + f, "r") as track_file:
+        track_reader = csv.DictReader(track_file)
+
+        for row in track_reader:
+            rows.append(row)
+
+    return rows
+
+
+def add_row(f: str, temp: str, medicine: str, dosage: str) -> None:
+
+    """
+    Add a row to the track stored in the csv file
+    :param f: csv file with track data
+    :return: None
+    """
+
+    date: datetime = datetime.now()
+    day: str = date.strftime("%d-%m-%Y")
+    hour: str = date.strftime("%H:%M")
+    path: str = "./csv_files/"
+    file_path: str = path + f
+
+    # Only accepts valid temperature
+    if not float(temp) > 35.0 or not float(temp) < 42.0:
+        raise ValueError("Temperature has not a valid value")
+
+    # Add row to track
+    with open(file_path, "a") as track_file:
+        fieldnames: list[str] = ["Name", "Patology", "Date", "Hour", "Temperature", "Medicine", "Dosage"]
+        track_writer = csv.DictWriter(track_file, fieldnames=fieldnames)
+
+        track_writer.writerow({
+            "Name": "",
+            "Patology": "",
+            "Date": day,
+            "Hour": hour,
+            "Temperature": temp,
+            "Medicine": medicine,
+            "Dosage": dosage
+        })
+
+
+def convert_track(f: str) -> None:
+
+    """
+    Convert the csv file to a pdf file
+    :param f: csv file with track data
+    :return: None
+    """
+
+    # Get data
+    data: list[dict[str, str]] = open_track(f)
+
+    # Format fieldnames
+    format_name: str = "Name: " + data[0]["Name"].title()
+    format_date: str = "Date: " + data[0]["Date"]
+    format_patology: str = "Patology: " + data[0]["Patology"].title()
+
+    # Delete no needed fields
+    for row in data:
+        del row["Name"]
+        del row["Patology"]
+
+    path: str = "./pdf_files/"
+
+    # Create pdf file
+    pdf = FPDF()
+    pdf.add_page()
+
+    # Add header
+    pdf.set_font("Helvetica", size=16, style="BU")
+    pdf.cell(w=180, h=30, txt="Fever Monitoring", align="C", new_x="LMARGIN", new_y="NEXT")
+
+    # Add patient info
+    pdf.set_font("Helvetica", size=11)
+    pdf.cell(w=80, h=8, txt=format_name, new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(w=80, h=8, txt=format_date, new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(w=80, h=8, txt=format_patology, new_x="LMARGIN", new_y="NEXT")
+
+    # Set cells sizes
+    line_height: int = pdf.font_size * 2
+    col_width: int = pdf.epw / 5
+
+    pdf.ln(line_height)
+
+    # Add fieldnames to table
+    for field in data[0]:
+        pdf.multi_cell(col_width, line_height, field, border=1, align="C",
+            new_x="RIGHT", new_y="TOP", max_line_height=pdf.font_size)
+    pdf.ln(line_height)
+
+    # Add data cells
+    pdf.set_font("Helvetica", size=10)
+    for row in data:
+        for d in row:
+            pdf.multi_cell(col_width, line_height, row[d], border=1, align="C",
+                new_x="RIGHT", new_y="TOP", max_line_height=pdf.font_size)
+        pdf.ln(line_height)
+
+    # Create output pdf
+    pdf.output(f"{path + f.strip('.csv')}.pdf")
     
-    # Create buttons
-    button_1 = create_button("Create Tracker", 85, 5)
-    button_2 = create_button("Open Tracker", 5, 85)
-
-    # Add widgets
-    widgets["logo"].append(logo)
-    widgets["logo_text"].append(logo_text)
-    widgets["button_1"].append(button_1)
-    widgets["button_2"].append(button_2)
-
-    # Add items to grid
-    grid.addWidget(widgets["logo"][-1], 0, 0, 1, 1)
-    grid.addWidget(widgets["logo_text"][-1], 0, 1, 2, 1)
-    grid.addWidget(widgets["button_1"][-1], 1, 0, 1, 1)
-    grid.addWidget(widgets["button_2"][-1], 1, 1, 1, 1)
-
-
-def frame_2():
-    clear_widgets()
-    image = QPixmap(".assets/logo.png")
-    logo = QLabel()
-    logo.setPixmap(image)
-    logo.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-    logo.setStyleSheet("margin-top: 100px;")
-    widgets["logo"].append(logo)
