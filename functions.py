@@ -4,7 +4,7 @@ from datetime import datetime
 from fpdf import FPDF # type: ignore
 
 
-def new_track(name: str, patology: str, temp: str, medicine: str, dosage: str):
+def new_track(name: str, temp: str, medicine: str, dose: str):
 
     """
     Create new track stored in a csv file
@@ -17,23 +17,22 @@ def new_track(name: str, patology: str, temp: str, medicine: str, dosage: str):
     file_path: str = os.path.join(path, f"{name}_{day}.csv")
 
     # Only accepts valid temperature
-    if not float(temp) > 35.0 or not float(temp) < 42.0:
+    if not 35.0 < float(temp) < 42.0:
         raise ValueError("Temperature has not a valid value")
 
     # Create csv file
-    with open(file_path, "w") as track_file:
-        fieldnames: list[str] = ["Name", "Patology", "Date", "Hour", "Temperature", "Medicine", "Dosage"]
+    with open(file_path, "w", end="") as track_file:
+        fieldnames: list[str] = ["Name", "Date", "Hour", "Temperature", "Medicine", "Dose"]
         track_writer = csv.DictWriter(track_file, fieldnames=fieldnames)
 
         track_writer.writeheader()
         track_writer.writerow({
             "Name": name,
-            "Patology": patology,
             "Date": day,
             "Hour": hour,
             "Temperature": temp,
             "Medicine": medicine,
-            "Dosage": dosage
+            "Dose": dose
         })
 
 
@@ -56,7 +55,7 @@ def open_track(f: str) -> "list[dict[str, str]]":
     return rows
 
 
-def add_row(f: str, temp: str, medicine: str, dosage: str) -> None:
+def add_row(f: str, temp: str, medicine: str, dose: str) -> None:
 
     """
     Add a row to the track stored in the csv file
@@ -71,22 +70,21 @@ def add_row(f: str, temp: str, medicine: str, dosage: str) -> None:
     file_path: str = path + f
 
     # Only accepts valid temperature
-    if not float(temp) > 35.0 or not float(temp) < 42.0:
+    if not 35.0 < float(temp) < 42.0:
         raise ValueError("Temperature has not a valid value")
 
     # Add row to track
-    with open(file_path, "a") as track_file:
-        fieldnames: list[str] = ["Name", "Patology", "Date", "Hour", "Temperature", "Medicine", "Dosage"]
+    with open(file_path, "a", end="") as track_file:
+        fieldnames: list[str] = ["Name", "Date", "Hour", "Temperature", "Medicine", "Dose"]
         track_writer = csv.DictWriter(track_file, fieldnames=fieldnames)
 
         track_writer.writerow({
             "Name": "",
-            "Patology": "",
             "Date": day,
             "Hour": hour,
             "Temperature": temp,
             "Medicine": medicine,
-            "Dosage": dosage
+            "Dose": dose
         })
 
 
@@ -104,12 +102,10 @@ def convert_track(f: str) -> None:
     # Format fieldnames
     format_name: str = "Name: " + data[0]["Name"].title()
     format_date: str = "Date: " + data[0]["Date"]
-    format_patology: str = "Patology: " + data[0]["Patology"].title()
 
     # Delete no needed fields
     for row in data:
         del row["Name"]
-        del row["Patology"]
 
     path: str = "./pdf_files/"
 
@@ -125,7 +121,6 @@ def convert_track(f: str) -> None:
     pdf.set_font("Helvetica", size=11)
     pdf.cell(w=80, h=8, txt=format_name, new_x="LMARGIN", new_y="NEXT")
     pdf.cell(w=80, h=8, txt=format_date, new_x="LMARGIN", new_y="NEXT")
-    pdf.cell(w=80, h=8, txt=format_patology, new_x="LMARGIN", new_y="NEXT")
 
     # Set cells sizes
     line_height: int = pdf.font_size * 2

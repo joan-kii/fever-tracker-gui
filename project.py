@@ -4,7 +4,7 @@ from PyQt5.QtGui import QPixmap # type: ignore
 from PyQt5 import QtGui, QtCore # type: ignore
 from PyQt5.QtGui import QCursor # type: ignore
 
-from gui import frame_1, main_layout
+from gui import frame_1, main_layout, create_logo
 
 
 def main() -> None:
@@ -22,6 +22,7 @@ def main() -> None:
     window.move(350, 200)
     window.setStyleSheet("background: #2a9d8f;")
     
+    create_logo()
     frame_1()
     window.setLayout(main_layout)
     window.show()
