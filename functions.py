@@ -21,7 +21,7 @@ def new_track(name: str, temp: str, medicine: str, dose: str):
         raise ValueError("Temperature has not a valid value")
 
     # Create csv file
-    with open(file_path, "w", end="") as track_file:
+    with open(file_path, "w", newline="") as track_file:
         fieldnames: list[str] = ["Name", "Date", "Hour", "Temperature", "Medicine", "Dose"]
         track_writer = csv.DictWriter(track_file, fieldnames=fieldnames)
 
@@ -74,7 +74,7 @@ def add_row(f: str, temp: str, medicine: str, dose: str) -> None:
         raise ValueError("Temperature has not a valid value")
 
     # Add row to track
-    with open(file_path, "a", end="") as track_file:
+    with open(file_path, "a", newline="") as track_file:
         fieldnames: list[str] = ["Name", "Date", "Hour", "Temperature", "Medicine", "Dose"]
         track_writer = csv.DictWriter(track_file, fieldnames=fieldnames)
 
