@@ -2,11 +2,11 @@ import os
 from PyQt5.QtWidgets import (
     QVBoxLayout, QHBoxLayout, QGridLayout, QFormLayout, 
     QDialogButtonBox, QLabel, QPushButton, QLineEdit,
-    QVBoxLayout, QListWidget, ) # type: ignore
+    QVBoxLayout, QListWidget, QTableWidget, QTableWidgetItem) # type: ignore
 from PyQt5.QtGui import QCursor, QFont # type: ignore
 from PyQt5 import QtCore
 
-from functions import new_track, open_track
+from functions import new_track, open_track, add_row, convert_track
 
 
 # Main Layout
@@ -33,21 +33,7 @@ list_layout = QVBoxLayout()
 
 # Helpers
 
-def pipeline(txt: str):
-
-    """
-    Manage render frames
-    :return: None
-    """
-    if txt == "Create Tracker":
-        frame_2()
-    elif txt == "Cancel":
-        frame_1()
-    elif txt == "Open Tracker":
-        frame_3()
-
-
-def create_button(txt: str, l_margin: int, r_margin: int):
+def create_button(txt, fn, l_margin, r_margin, file=None,):
 
     """
     Create buttons
@@ -73,8 +59,11 @@ def create_button(txt: str, l_margin: int, r_margin: int):
         }
         """
     )
+    if file:
+        button.clicked.connect(lambda _: fn(file))
+    else:
+        button.clicked.connect(lambda _: fn())
 
-    button.clicked.connect(lambda _: pipeline(button.text()))
     return button
             
 # Create logo
@@ -132,8 +121,8 @@ def frame_1():
     delete_widgets()
     
     # Create buttons
-    button_1 = create_button("Create Tracker", 10, 10)
-    button_2 = create_button("Open Tracker", 10, 10)
+    button_1 = create_button("Create Tracker", frame_2, 10, 10)
+    button_2 = create_button("Open Tracker", frame_3, 10, 10)
 
     # Add items to grid
     grid.addWidget(button_1, 0, 0)
@@ -210,7 +199,7 @@ def frame_3():
     def open_csv_file(list_item):
         file_to_open = list_item.text().split(" ")
         file_to_open = file_to_open[0].lower() + "_" + file_to_open[1] + ".csv"
-        frame_4(open_track(file_to_open))
+        frame_4(file_to_open)
 
 
     # Create csv files list
@@ -219,7 +208,7 @@ def frame_3():
     list_widget.itemClicked.connect(open_csv_file)
 
     # Create Cancel button
-    cancel_button = create_button("Cancel", 10, 10)
+    cancel_button = create_button("Cancel", frame_1, 10, 10)
 
     # Add widgets to layouts
     list_layout.addWidget(list_widget)
@@ -232,12 +221,53 @@ def frame_3():
 
 # Frame 4
 
-def frame_4(data):
+def frame_4(file):
 
     """
     Render frame 4 - data table and add row/convert to pdf options
     :return: None
     """
 
-    # Seguir aquí (crear data table y options buttons)
-    print(data)
+    delete_widgets()
+
+    data = open_track(file)
+
+    # Create table
+    table = QTableWidget()
+    table.setRowCount(len(data) - 1)
+    table.setColumnCount(len(data[0]))
+
+    header_labels = []
+    for column_header in data[0]:
+        header_labels.append(column_header)
+
+    # Delete headers before loop over data
+    data.pop(0)
+    for x, row in enumerate(data):
+        for y, cell in enumerate(row):
+            cell_data = QTableWidgetItem(cell)
+            table.setItem(x, y, cell_data)
+
+    table.setHorizontalHeaderLabels(header_labels)
+    table.resizeColumnsToContents()
+    table.resizeRowsToContents()
+
+    # Create buttons
+    add_row_button = create_button("Add temperature", frame_5, 10, 10, file=file)
+    convert_to_pdf_button = create_button("Convert to pdf", convert_track, 10, 10, file=file)
+
+    # Add widget to layout
+    list_layout.addWidget(table)
+    row_layout.addWidget(add_row_button)
+    row_layout.addWidget(convert_to_pdf_button)
+
+    # Add layout to main layout
+    main_layout.addLayout(list_layout)
+    main_layout.addLayout(row_layout)
+
+
+# Frame 5
+
+def frame_5(file):
+    # Seguir aquí (crear form add row y render frame 4 de nuevo)
+    print(file)

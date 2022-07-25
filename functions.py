@@ -47,7 +47,7 @@ def open_track(f: str) -> "list[dict[str, str]]":
 
     rows: list[dict[str, str]] = []
     with open("./csv_files/" + f, "r") as track_file:
-        track_reader = csv.DictReader(track_file)
+        track_reader = csv.reader(track_file)
 
         for row in track_reader:
             rows.append(row)
@@ -88,20 +88,21 @@ def add_row(f: str, temp: str, medicine: str, dose: str) -> None:
         })
 
 
-def convert_track(f: str) -> None:
+def convert_track(f):
 
     """
     Convert the csv file to a pdf file
     :param f: csv file with track data
     :return: None
     """
-
+    
     # Get data
-    data: list[dict[str, str]] = open_track(f)
+    data = open_track(f) # Seguir aquí (abrir f como csv.DictReader)  
+    print(data)
 
     # Format fieldnames
-    format_name: str = "Name: " + data[0]["Name"].title()
-    format_date: str = "Date: " + data[0]["Date"]
+    format_name = "Name: " + data[0]["Name"].title()
+    format_date = "Date: " + data[0]["Date"]
 
     # Delete no needed fields
     for row in data:
