@@ -1,10 +1,9 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QLabel, QPushButton, QVBoxLayout, QWidget, QFileDialog, QGridLayout # type: ignore
-from PyQt5.QtGui import QPixmap # type: ignore
-from PyQt5 import QtGui, QtCore # type: ignore
-from PyQt5.QtGui import QCursor # type: ignore
+from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtGui import QIcon
 
 from gui import frame_1, main_layout, create_logo
+from styles import styles
 
 
 def main() -> None:
@@ -17,10 +16,11 @@ def main() -> None:
     app = QApplication(sys.argv)
     window = QWidget()
     window.setWindowTitle("Fever Tracker")
+    window.setWindowIcon(QIcon("./assets/thermometer.png"))
     window.setFixedWidth(1000)
     window.setFixedHeight(500)
     window.move(350, 200)
-    window.setStyleSheet("background: #2a9d8f;")
+    window.setStyleSheet(styles)
     
     create_logo()
     frame_1()

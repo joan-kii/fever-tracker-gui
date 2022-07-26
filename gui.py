@@ -2,8 +2,9 @@ import os
 from PyQt5.QtWidgets import (
     QVBoxLayout, QHBoxLayout, QGridLayout, QFormLayout, 
     QDialogButtonBox, QLabel, QPushButton, QLineEdit,
-    QVBoxLayout, QListWidget, QTableWidget, QTableWidgetItem) # type: ignore
-from PyQt5.QtGui import QCursor, QFont # type: ignore
+    QVBoxLayout, QListWidget, QTableWidget, QTableWidgetItem,
+    QMessageBox)
+from PyQt5.QtGui import QCursor, QFont
 from PyQt5 import QtCore
 
 from functions import new_track, open_track, add_row, convert_track
@@ -33,7 +34,7 @@ list_layout = QVBoxLayout()
 
 # Helpers
 
-def create_button(txt, fn, l_margin, r_margin, file=None,):
+def create_button(txt, fn, file=None,):
 
     """
     Create buttons
@@ -43,22 +44,6 @@ def create_button(txt, fn, l_margin, r_margin, file=None,):
     button = QPushButton(txt)
     button.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
     button.setFixedWidth(300)
-    button.setStyleSheet(
-        "*{margin-left: " + str(l_margin) + "px;" +
-        "margin-right: " + str(r_margin) + "px;" +
-        """
-        padding: 15px 0;
-        color: white;
-        font-family: 'Lucida Bright';
-        font-size: 16px;
-        border-radius: 25px;
-        border: 4px solid '#ff595e';
-        }
-        *:hover{
-            background: '#ff595e';
-        }
-        """
-    )
     if file:
         button.clicked.connect(lambda _: fn(file))
     else:
@@ -76,15 +61,7 @@ def create_logo():
     """
 
     logo = logo = QLabel("Fever Tracker")
-    logo.setFont(QFont("Lucida Handwriting"))
     logo.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-    logo.setStyleSheet(
-        """
-        font-size: 40px; 
-        font-weight: bold;
-        color: "white"; 
-        """
-    )
     
     header.addWidget(logo)
     main_layout.addLayout(header)
@@ -108,6 +85,24 @@ def delete_widgets():
                 else:
                     current_layout.deleteLater()
 
+# Convert to pdf
+
+def convert_to_pdf(file):
+
+    """
+    Convert track to pdf an alert the user
+    :return: None 
+    """
+
+    convert_track(file)
+
+    msg = QMessageBox()
+    msg.setText("PDF created!")
+    msg.setIcon(QMessageBox.Information)
+
+    # Add message to layout
+    main_layout.addWidget(msg)
+
 
 # Frames
 
@@ -121,8 +116,8 @@ def frame_1():
     delete_widgets()
     
     # Create buttons
-    button_1 = create_button("Create Tracker", frame_2, 10, 10)
-    button_2 = create_button("Open Tracker", frame_3, 10, 10)
+    button_1 = create_button("Create Tracker", frame_2)
+    button_2 = create_button("Open Tracker", frame_3)
 
     # Add items to grid
     grid.addWidget(button_1, 0, 0)
@@ -146,9 +141,7 @@ def frame_2():
     form_title.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
     form_title.setStyleSheet(
         """
-        font-size: 18px; 
-        font-weight: bold;
-        color: "white"; 
+        font-size: 18px;
         """
     )
     form.addRow(form_title)
@@ -208,7 +201,7 @@ def frame_3():
     list_widget.itemClicked.connect(open_csv_file)
 
     # Create Cancel button
-    cancel_button = create_button("Cancel", frame_1, 10, 10)
+    cancel_button = create_button("Cancel", frame_1)
 
     # Add widgets to layouts
     list_layout.addWidget(list_widget)
@@ -253,13 +246,15 @@ def frame_4(file):
     table.resizeRowsToContents()
 
     # Create buttons
-    add_row_button = create_button("Add temperature", frame_5, 10, 10, file=file)
-    convert_to_pdf_button = create_button("Convert to pdf", convert_track, 10, 10, file=file)
+    add_row_button = create_button("Add temperature", frame_5, file=file)
+    convert_to_pdf_button = create_button("Convert to pdf", convert_to_pdf, file=file)
+    cancel = create_button("Cancel", frame_1)
 
     # Add widget to layout
     list_layout.addWidget(table)
     row_layout.addWidget(add_row_button)
     row_layout.addWidget(convert_to_pdf_button)
+    row_layout.addWidget(cancel)
 
     # Add layout to main layout
     main_layout.addLayout(list_layout)
@@ -269,5 +264,40 @@ def frame_4(file):
 # Frame 5
 
 def frame_5(file):
-    # Seguir aquí (crear form add row y render frame 4 de nuevo)
-    print(file)
+    
+    """
+    Render add row form
+    :return: None  
+    """
+
+    delete_widgets()
+
+    # Create Form
+    form_title = QLabel("Add Temperature")
+    form_title.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+    form_title.setStyleSheet(
+        """
+        font-size: 18px;
+        """
+    )
+    form.addRow(form_title)
+    temp = QLineEdit()
+    form.addRow(QLabel("Temperature: "), temp)
+
+    medicine = QLineEdit()
+    form.addRow(QLabel("Medicine: "), medicine)
+
+    dose = QLineEdit()
+    form.addRow(QLabel("Dose: "), dose)
+
+    def get_info():
+        add_row(file, temp.text(), medicine.text(), dose.text())
+        frame_4(file)
+
+    button_group = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+    button_group.accepted.connect(get_info)
+    button_group.rejected.connect(frame_1)
+    form.addRow(button_group)
+
+    # Add layout to main layout
+    main_layout.addLayout(form)

@@ -36,7 +36,25 @@ def new_track(name: str, temp: str, medicine: str, dose: str):
         })
 
 
-def open_track(f: str) -> "list[dict[str, str]]":
+def open_track(f: str) -> "list[list[str, str]]":
+
+    """
+    Open a track stored in the csv file
+    :param f: csv file with track data
+    :return: A list of dicts with data
+    :rtype: list[dict[str, str]]
+    """
+
+    rows: list[list[str, str]] = []
+    with open("./csv_files/" + f, "r") as track_file:
+        track_reader = csv.reader(track_file)
+
+        for row in track_reader:
+            rows.append(row)
+
+    return rows
+
+def open_track_dict(f: str) -> "list[dict[str, str]]":
 
     """
     Open a track stored in the csv file
@@ -47,13 +65,12 @@ def open_track(f: str) -> "list[dict[str, str]]":
 
     rows: list[dict[str, str]] = []
     with open("./csv_files/" + f, "r") as track_file:
-        track_reader = csv.reader(track_file)
+        track_reader = csv.DictReader(track_file)
 
         for row in track_reader:
             rows.append(row)
 
     return rows
-
 
 def add_row(f: str, temp: str, medicine: str, dose: str) -> None:
 
@@ -97,8 +114,7 @@ def convert_track(f):
     """
     
     # Get data
-    data = open_track(f) # Seguir aquí (abrir f como csv.DictReader)  
-    print(data)
+    data = open_track_dict(f) 
 
     # Format fieldnames
     format_name = "Name: " + data[0]["Name"].title()
@@ -116,7 +132,7 @@ def convert_track(f):
 
     # Add header
     pdf.set_font("Helvetica", size=16, style="BU")
-    pdf.cell(w=180, h=30, txt="Fever Monitoring", align="C", new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(w=180, h=30, txt="Fever Tracker", align="C", new_x="LMARGIN", new_y="NEXT")
 
     # Add patient info
     pdf.set_font("Helvetica", size=11)
