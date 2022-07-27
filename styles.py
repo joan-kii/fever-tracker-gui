@@ -12,8 +12,6 @@ styles = """
         color: 'white';
     }
     QPushButton{
-        margin-left: 10px;
-        margin-right: 10px;
         padding: 15px 0;
         color: white;
         font-size: 20px;
@@ -25,9 +23,18 @@ styles = """
     }
     QLineEdit{
         margin-bottom: 10px;
-        padding: 4px 8px;
+        padding: 2px 8px;
         width: 150px;
         background-color: 'white';
         border-radius: 5px;
+        font-size: 14px;
+    }
+    QListWidget{
+        padding: 25px;
+        width: 500px;
+        font-size: 16px;
+        background-color: 'white';
+        border: 2px solid #114b5f;
+        border-radius: 25px;
     }
 """

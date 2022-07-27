@@ -130,6 +130,7 @@ def frame_1():
     # Add items to grid
     grid.addWidget(button_1, 0, 0)
     grid.addWidget(button_2, 0, 1)
+    grid.setContentsMargins(0, 0, 0, 200)
 
     # Add layout to main layout
     main_layout.addLayout(grid)
@@ -154,24 +155,33 @@ def frame_2():
         """
     )
     form.addRow(form_title)
-    name = QLineEdit()
-    name.setFixedWidth(120)
 
-    # Seguir aquí (style qlineedits)
-    
+    name = QLineEdit()
+    name.setFixedWidth(320)
     label_name = QLabel("Patient Name: ")
+    label_name.setFixedWidth(120)
+    label_name.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
     form.addRow(label_name, name)
 
     temp = QLineEdit()
+    temp.setFixedWidth(320)
     label_temp = QLabel("Temperature: ")
+    label_temp.setFixedWidth(120)
+    label_temp.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
     form.addRow(label_temp, temp)
 
     medicine = QLineEdit()
+    medicine.setFixedWidth(320)
     label_medicine = QLabel("Medicine: ")
+    label_medicine.setFixedWidth(120)
+    label_medicine.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
     form.addRow(label_medicine, medicine)
 
     dose = QLineEdit()
+    dose.setFixedWidth(320)
     label_dose = QLabel("Dose: ")
+    label_dose.setFixedWidth(120)
+    label_dose.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
     form.addRow(label_dose, dose)
 
     def get_info():
@@ -179,11 +189,15 @@ def frame_2():
         frame_1()
 
     button_group = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+    button_group.setCenterButtons(True)
+    button_group.setStyleSheet("width: 300px;")
+    button_group.button(QDialogButtonBox.Ok).setText("Create")
     button_group.accepted.connect(get_info)
     button_group.rejected.connect(frame_1)
     form.addRow(button_group)
 
     # Add layout to main layout
+    form.setContentsMargins(250, 0, 250, 50)
     main_layout.addLayout(form)
 
 # Frame 3
@@ -214,6 +228,7 @@ def frame_3():
 
     # Create csv files list
     list_widget = QListWidget()
+    list_widget.setFixedSize(500, 300)
     list_widget.addItems(csv_files_formatted)
     list_widget.itemClicked.connect(open_csv_file)
 
@@ -222,6 +237,7 @@ def frame_3():
 
     # Add widgets to layouts
     list_layout.addWidget(list_widget)
+    list_layout.setContentsMargins(250, 0, 250, 30)
     row_layout.addWidget(cancel_button)
     
     # Add layout to main layout
@@ -237,6 +253,8 @@ def frame_4(file):
     Render frame 4 - data table and add row/convert to pdf options
     :return: None
     """
+
+    # Seguir aquí (styles table y add row)
 
     delete_widgets()
 
