@@ -1,25 +1,33 @@
+from PyQt5.QtGui import QLinearGradient
+
+
 styles = """
     QWidget{
-        background: linear-gradient(0deg, rgba(247,206,179,1) 0%, rgba(253,135,45,1) 67%);
-        background: rgb(247,206,179);
-        font-family: 'Lucida Bright';
+        background: QLinearGradient(x1: 0, y1: 0, x2: 1, y2: 1, stop: 0 #036666, stop: 1 #99e2b4);
+        font-family: 'Lucida Typewriter';
     }
     QLabel{
-        font-family: "Lucida Handwriting";
-        font-size: 40px; 
-        font-weight: bold;
-        color: "white";
+        background: transparent;
+        font-size: 16px;
+        color: 'white';
     }
     QPushButton{
         margin-left: 10px;
         margin-right: 10px;
         padding: 15px 0;
         color: white;
-        font-size: 16px;
-        border-radius: 25px;
-        border: 4px solid '#ff595e';
+        font-size: 20px;
+        border-radius: 20px;
+        background: #1a936f;
     }
     QPushButton:hover{
-        background: '#ff595e';
+        background: '#114b5f';
+    }
+    QLineEdit{
+        margin-bottom: 10px;
+        padding: 4px 8px;
+        width: 150px;
+        background-color: 'white';
+        border-radius: 5px;
     }
 """

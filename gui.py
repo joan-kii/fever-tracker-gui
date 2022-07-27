@@ -1,10 +1,11 @@
+from cProfile import label
 import os
 from PyQt5.QtWidgets import (
     QVBoxLayout, QHBoxLayout, QGridLayout, QFormLayout, 
     QDialogButtonBox, QLabel, QPushButton, QLineEdit,
     QVBoxLayout, QListWidget, QTableWidget, QTableWidgetItem,
     QMessageBox)
-from PyQt5.QtGui import QCursor, QFont
+from PyQt5.QtGui import QCursor
 from PyQt5 import QtCore
 
 from functions import new_track, open_track, add_row, convert_track
@@ -62,6 +63,13 @@ def create_logo():
 
     logo = logo = QLabel("Fever Tracker")
     logo.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+    logo.setStyleSheet(
+        """
+        font-family: 'Lucida Handwriting';
+        font-size: 40px; 
+        font-weight: bold;
+        """
+    )
     
     header.addWidget(logo)
     main_layout.addLayout(header)
@@ -141,21 +149,30 @@ def frame_2():
     form_title.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
     form_title.setStyleSheet(
         """
-        font-size: 18px;
+        margin-bottom: 40px;
+        font-size: 22px;
         """
     )
     form.addRow(form_title)
     name = QLineEdit()
-    form.addRow(QLabel("Patient Name: "), name)
+    name.setFixedWidth(120)
+
+    # Seguir aquí (style qlineedits)
+    
+    label_name = QLabel("Patient Name: ")
+    form.addRow(label_name, name)
 
     temp = QLineEdit()
-    form.addRow(QLabel("Temperature: "), temp)
+    label_temp = QLabel("Temperature: ")
+    form.addRow(label_temp, temp)
 
     medicine = QLineEdit()
-    form.addRow(QLabel("Medicine: "), medicine)
+    label_medicine = QLabel("Medicine: ")
+    form.addRow(label_medicine, medicine)
 
     dose = QLineEdit()
-    form.addRow(QLabel("Dose: "), dose)
+    label_dose = QLabel("Dose: ")
+    form.addRow(label_dose, dose)
 
     def get_info():
         new_track(name.text(), temp.text(), medicine.text(), dose.text())
@@ -282,13 +299,16 @@ def frame_5(file):
     )
     form.addRow(form_title)
     temp = QLineEdit()
-    form.addRow(QLabel("Temperature: "), temp)
+    label_temp = QLabel("Temperature: ")
+    form.addRow(label_temp, temp)
 
     medicine = QLineEdit()
-    form.addRow(QLabel("Medicine: "), medicine)
+    label_medicine = QLabel("Medicine: ")
+    form.addRow(label_medicine, medicine)
 
     dose = QLineEdit()
-    form.addRow(QLabel("Dose: "), dose)
+    label_dose = QLabel("Dose: ")
+    form.addRow(label_dose, dose)
 
     def get_info():
         add_row(file, temp.text(), medicine.text(), dose.text())
