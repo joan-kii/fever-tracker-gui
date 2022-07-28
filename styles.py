@@ -19,7 +19,7 @@ styles = """
         background: #1a936f;
     }
     QPushButton:hover{
-        background: '#114b5f';
+        background: #114b5f;
     }
     QLineEdit{
         margin-bottom: 10px;
@@ -36,5 +36,20 @@ styles = """
         background-color: 'white';
         border: 2px solid #114b5f;
         border-radius: 25px;
+    }
+    QTableView {
+        font-size: 14px;
+        background-color: 'white';
+    }
+    QTableView::item:selected {
+        background-color: #114b5f;
+    }
+    QTableView QTableCornerButton::section {
+        background-color: #114b5f;
+    }
+    QHeaderView, QHeaderView::section {
+        background-color: #114b5f;
+        color: 'white';
+        font-size: 14px;
     }
 """

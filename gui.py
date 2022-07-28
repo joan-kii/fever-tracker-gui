@@ -107,10 +107,9 @@ def convert_to_pdf(file):
     msg = QMessageBox()
     msg.setText("PDF created!")
     msg.setIcon(QMessageBox.Information)
+    msg.exec_()
 
-    # Add message to layout
-    main_layout.addWidget(msg)
-
+    # Seguir aquí (style msg box)
 
 # Frames
 
@@ -254,14 +253,13 @@ def frame_4(file):
     :return: None
     """
 
-    # Seguir aquí (styles table y add row)
-
     delete_widgets()
 
     data = open_track(file)
 
     # Create table
     table = QTableWidget()
+    table.setFixedSize(620, 300)
     table.setRowCount(len(data) - 1)
     table.setColumnCount(len(data[0]))
 
@@ -273,12 +271,10 @@ def frame_4(file):
     data.pop(0)
     for x, row in enumerate(data):
         for y, cell in enumerate(row):
-            cell_data = QTableWidgetItem(cell)
+            cell_data = QTableWidgetItem(cell.title())
             table.setItem(x, y, cell_data)
 
     table.setHorizontalHeaderLabels(header_labels)
-    table.resizeColumnsToContents()
-    table.resizeRowsToContents()
 
     # Create buttons
     add_row_button = create_button("Add temperature", frame_5, file=file)
@@ -287,6 +283,7 @@ def frame_4(file):
 
     # Add widget to layout
     list_layout.addWidget(table)
+    list_layout.setContentsMargins(200, 0, 0, 40)
     row_layout.addWidget(add_row_button)
     row_layout.addWidget(convert_to_pdf_button)
     row_layout.addWidget(cancel)
@@ -315,17 +312,26 @@ def frame_5(file):
         font-size: 18px;
         """
     )
-    form.addRow(form_title)
+
     temp = QLineEdit()
+    temp.setFixedWidth(320)
     label_temp = QLabel("Temperature: ")
+    label_temp.setFixedWidth(120)
+    label_temp.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
     form.addRow(label_temp, temp)
 
     medicine = QLineEdit()
+    medicine.setFixedWidth(320)
     label_medicine = QLabel("Medicine: ")
+    label_medicine.setFixedWidth(120)
+    label_medicine.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
     form.addRow(label_medicine, medicine)
 
     dose = QLineEdit()
+    dose.setFixedWidth(320)
     label_dose = QLabel("Dose: ")
+    label_dose.setFixedWidth(120)
+    label_dose.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
     form.addRow(label_dose, dose)
 
     def get_info():
@@ -333,9 +339,13 @@ def frame_5(file):
         frame_4(file)
 
     button_group = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+    button_group.setCenterButtons(True)
+    button_group.setStyleSheet("width: 300px;")
+    button_group.button(QDialogButtonBox.Ok).setText("Add")
     button_group.accepted.connect(get_info)
     button_group.rejected.connect(frame_1)
     form.addRow(button_group)
 
     # Add layout to main layout
+    form.setContentsMargins(250, 0, 250, 50)
     main_layout.addLayout(form)

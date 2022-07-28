@@ -155,7 +155,7 @@ def convert_track(f):
     pdf.set_font("Helvetica", size=10)
     for row in data:
         for d in row:
-            pdf.multi_cell(col_width, line_height, row[d], border=1, align="C",
+            pdf.multi_cell(col_width, line_height, row[d].title(), border=1, align="C",
                 new_x="RIGHT", new_y="TOP", max_line_height=pdf.font_size)
         pdf.ln(line_height)
 
