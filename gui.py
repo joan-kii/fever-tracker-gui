@@ -1,4 +1,3 @@
-from cProfile import label
 import os
 from PyQt5.QtWidgets import (
     QVBoxLayout, QHBoxLayout, QGridLayout, QFormLayout, 
@@ -35,16 +34,21 @@ list_layout = QVBoxLayout()
 
 # Helpers
 
-def create_button(txt, fn, file=None,):
+def create_button(txt, fn, file=None):
 
     """
     Create buttons
-    :return: None
+    :param txt: button's text
+    :param fn: function callback
+    :param file: csv file to callback argument 
+    :return: button
+    :rtype: QPushButton
     """
 
     button = QPushButton(txt)
     button.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
     button.setFixedWidth(300)
+
     if file:
         button.clicked.connect(lambda _: fn(file))
     else:
@@ -98,18 +102,20 @@ def delete_widgets():
 def convert_to_pdf(file):
 
     """
-    Convert track to pdf an alert the user
+    Convert track to pdf and alert the user
+    :param file: csv file to convert
     :return: None 
     """
 
     convert_track(file)
 
+    # Create message
     msg = QMessageBox()
+    msg.setWindowTitle("Fever Tracker")
     msg.setText("PDF created!")
     msg.setIcon(QMessageBox.Information)
     msg.exec_()
 
-    # Seguir aquí (style msg box)
 
 # Frames
 
@@ -155,6 +161,7 @@ def frame_2():
     )
     form.addRow(form_title)
 
+    # Create form elements
     name = QLineEdit()
     name.setFixedWidth(320)
     label_name = QLabel("Patient Name: ")
@@ -214,6 +221,7 @@ def frame_3():
     csv_files = os.listdir("./csv_files/")
     csv_files_formatted = []
 
+    # Format data
     for csv_file in csv_files:
         new_csv_filename = csv_file.strip(".csv").split("_")
         new_csv_filename = new_csv_filename[0].title() + " " + new_csv_filename[1]
@@ -250,6 +258,7 @@ def frame_4(file):
 
     """
     Render frame 4 - data table and add row/convert to pdf options
+    :param file: csv file to show
     :return: None
     """
 
@@ -299,6 +308,7 @@ def frame_5(file):
     
     """
     Render add row form
+    :param file: csv file to add data
     :return: None  
     """
 
@@ -313,6 +323,7 @@ def frame_5(file):
         """
     )
 
+    # Create form elements
     temp = QLineEdit()
     temp.setFixedWidth(320)
     label_temp = QLabel("Temperature: ")

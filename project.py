@@ -6,10 +6,10 @@ from gui import frame_1, main_layout, create_logo
 from styles import styles
 
 
-def main() -> None:
+def main():
 
     """
-    Create the Tkinter GUI
+    Create the PyQt GUI
     :return: None
     """
 

@@ -1,6 +1,3 @@
-from PyQt5.QtGui import QLinearGradient
-
-
 styles = """
     QWidget{
         background: QLinearGradient(x1: 0, y1: 0, x2: 1, y2: 1, stop: 0 #036666, stop: 1 #99e2b4);
